@@ -1,0 +1,21 @@
+#cloud-config
+package_update: true
+packages:
+  - nginx
+
+runcmd:
+  - systemctl enable nginx
+  - systemctl restart nginx
+
+write_files:
+  - path: /var/www/html/index.html
+    owner: root:root
+    permissions: "0644"
+    content: |
+      <html>
+        <head><title>Azure Incident Response Platform</title></head>
+        <body>
+          <h1>Nginx is running</h1>
+          <p>Provisioned with Terraform cloud-init.</p>
+        </body>
+      </html>

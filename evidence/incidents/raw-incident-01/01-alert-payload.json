@@ -1,0 +1,54 @@
+{
+  "schemaId": "azureMonitorCommonAlertSchema",
+  "data": {
+    "essentials": {
+      "alertId": "/subscriptions/<sub-id>/providers/Microsoft.AlertsManagement/alerts/90312f98-4dd6-4e4f-8ed8-fbd95e1f8b6a",
+      "alertRule": "alert-service-availability-endpoint",
+      "severity": "Sev1",
+      "signalType": "Metric",
+      "monitorCondition": "Fired",
+      "monitoringService": "Platform",
+      "alertTargetIDs": [
+        "/subscriptions/<sub-id>/resourceGroups/az-ir-platform-p-westeurope-rg-network/providers/Microsoft.Compute/virtualMachines/az-ir-platform-p-westeurope-vm-app-01"
+      ],
+      "originAlertId": "7f99d2ae-a721-4b93-8c67-7a90338714cd",
+      "firedDateTime": "2026-05-18T13:13:08.4412982Z",
+      "description": "Endpoint availability dropped below threshold",
+      "essentialsVersion": "1.0",
+      "alertContextVersion": "1.0"
+    },
+    "alertContext": {
+      "properties": {
+        "failedRegions": "eu-2,eu-3",
+        "threshold": "Availability < 1 over PT5M",
+        "runbook": "runbooks/vm-not-reachable.md",
+        "oncallRotation": "platform-primary"
+      },
+      "conditionType": "SingleResourceMultipleMetricCriteria",
+      "condition": {
+        "windowSize": "PT5M",
+        "allOf": [
+          {
+            "metricName": "AvgAvailability",
+            "metricNamespace": "microsoft.insights/components",
+            "operator": "LessThan",
+            "threshold": "1",
+            "timeAggregation": "Average",
+            "dimensions": [
+              {
+                "name": "location",
+                "value": "eu-2"
+              }
+            ],
+            "metricValue": 0
+          }
+        ]
+      }
+    },
+    "customProperties": {
+      "environment": "prod",
+      "incidentHint": "INC-2026-05-18-002",
+      "service": "customer-api"
+    }
+  }
+}

@@ -1,0 +1,54 @@
+subscription_id = "00000000-0000-0000-0000-000000000000"
+tenant_id       = "00000000-0000-0000-0000-000000000000"
+project_name    = "az-ir-platform"
+environment     = "prod"
+location        = "westeurope"
+vnet_cidr       = ["10.60.0.0/16"]
+subnet_cidrs = {
+  management  = "10.60.1.0/24"
+  application = "10.60.2.0/24"
+  monitoring  = "10.60.3.0/24"
+}
+container_subnet_cidr = "10.60.4.0/24"
+admin_source_cidrs             = ["10.10.30.0/24"]
+enable_app_vm_public_ip        = false
+enable_windows_vm              = true
+vm_size                        = "Standard_D2s_v5"
+admin_username                 = "azureadmin"
+admin_ssh_public_key           = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCreplace-with-your-public-key"
+windows_vm_size                = "Standard_D2s_v5"
+enable_management_vm_public_ip = false
+windows_admin_username         = "localadmin"
+windows_admin_password         = "<set-from-secret-store>"
+enable_monitoring              = true
+enable_container_workload      = false
+container_image                = "nginx:stable-alpine"
+container_cpu                  = 0.5
+container_memory_gb            = 1
+log_retention_in_days          = 30
+cpu_alert_threshold_percent    = 75
+monitor_action_group_email_receivers = [
+  {
+    name          = "prod-oncall"
+    email_address = "prod-oncall@example.com"
+  }
+]
+enable_backup                  = true
+backup_time_utc                = "22:00"
+backup_daily_retention_count   = 14
+enable_rbac                    = true
+pipeline_principal_object_id   = "<github-oidc-sp-object-id>"
+admin_user_object_id           = "<admin-user-or-group-object-id>"
+monitoring_reader_principal_object_id = "<monitoring-reader-user-or-group-object-id>"
+enable_governance_policy       = true
+governance_required_tags       = ["environment", "owner", "cost_center", "business_unit"]
+governance_allowed_vm_sizes    = ["Standard_D2s_v5", "Standard_D4s_v5", "Standard_D8s_v5"]
+governance_enforce_public_ip_deny = true
+owner                          = "cloud-support-team"
+cost_center                    = "CC-1000"
+business_unit                  = "it-operations"
+extra_tags = {
+  service          = "incident-response"
+  workload_profile = "prod-strict"
+  security_posture = "strict"
+}

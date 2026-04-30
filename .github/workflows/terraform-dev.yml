@@ -1,0 +1,203 @@
+name: Terraform Dev
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/terraform-dev.yml"
+      - "environments/dev/**"
+      - "modules/**"
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/terraform-dev.yml"
+      - "environments/dev/**"
+      - "modules/**"
+  workflow_dispatch:
+    inputs:
+      run_apply:
+        description: "Run terraform apply after plan approval"
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: terraform-dev-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  TF_IN_AUTOMATION: "true"
+  TF_INPUT: "false"
+  TF_ENV: dev
+  ARM_USE_OIDC: "true"
+  ARM_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
+  ARM_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
+  ARM_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+  TF_VAR_subscription_id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+  TF_VAR_tenant_id: ${{ vars.AZURE_TENANT_ID }}
+  TF_VAR_project_name: ${{ vars.TF_PROJECT_NAME }}
+  TF_VAR_environment: dev
+  TF_VAR_location: ${{ vars.TF_LOCATION }}
+  TF_VAR_vnet_cidr: ${{ vars.TF_VNET_CIDR_JSON }}
+  TF_VAR_subnet_cidrs: ${{ vars.TF_SUBNET_CIDRS_JSON }}
+  TF_VAR_admin_source_cidrs: ${{ vars.TF_ADMIN_SOURCE_CIDRS_JSON }}
+  TF_VAR_enable_app_vm_public_ip: ${{ vars.TF_ENABLE_APP_VM_PUBLIC_IP || 'true' }}
+  TF_VAR_vm_size: ${{ vars.TF_LINUX_VM_SIZE }}
+  TF_VAR_admin_username: ${{ vars.TF_LINUX_ADMIN_USERNAME }}
+  TF_VAR_admin_ssh_public_key: ${{ secrets.TF_ADMIN_SSH_PUBLIC_KEY }}
+  TF_VAR_windows_vm_size: ${{ vars.TF_WINDOWS_VM_SIZE }}
+  TF_VAR_enable_management_vm_public_ip: ${{ vars.TF_ENABLE_MANAGEMENT_VM_PUBLIC_IP || 'true' }}
+  TF_VAR_windows_admin_username: ${{ vars.TF_WINDOWS_ADMIN_USERNAME }}
+  TF_VAR_windows_admin_password: ${{ secrets.TF_WINDOWS_ADMIN_PASSWORD }}
+  TF_VAR_log_retention_in_days: ${{ vars.TF_LOG_RETENTION_IN_DAYS }}
+  TF_VAR_cpu_alert_threshold_percent: ${{ vars.TF_CPU_ALERT_THRESHOLD_PERCENT }}
+  TF_VAR_monitor_action_group_email_receivers: ${{ vars.TF_ACTION_GROUP_EMAIL_RECEIVERS_JSON }}
+  TF_VAR_enable_container_workload: ${{ vars.TF_ENABLE_CONTAINER_WORKLOAD || 'false' }}
+  TF_VAR_container_subnet_cidr: ${{ vars.TF_CONTAINER_SUBNET_CIDR || '' }}
+  TF_VAR_container_image: ${{ vars.TF_CONTAINER_IMAGE || 'nginx:stable-alpine' }}
+  TF_VAR_container_cpu: ${{ vars.TF_CONTAINER_CPU || '0.5' }}
+  TF_VAR_container_memory_gb: ${{ vars.TF_CONTAINER_MEMORY_GB || '1' }}
+  TF_VAR_backup_time_utc: ${{ vars.TF_BACKUP_TIME_UTC }}
+  TF_VAR_backup_daily_retention_count: ${{ vars.TF_BACKUP_DAILY_RETENTION_COUNT }}
+  TF_VAR_owner: ${{ vars.TF_OWNER }}
+  TF_VAR_cost_center: ${{ vars.TF_COST_CENTER }}
+  TF_VAR_business_unit: ${{ vars.TF_BUSINESS_UNIT }}
+  TF_VAR_extra_tags: ${{ vars.TF_EXTRA_TAGS_JSON }}
+
+jobs:
+  terraform-check:
+    name: Terraform Fmt Validate And Security Checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
+
+      - name: Terraform Init (No Backend)
+        working-directory: environments/dev
+        run: terraform init -backend=false
+
+      - name: Terraform Validate
+        working-directory: environments/dev
+        run: terraform validate
+
+      - name: Optional Tfsec
+        if: vars.ENABLE_TFSEC == 'true'
+        uses: aquasecurity/tfsec-action@v1.0.3
+        with:
+          working_directory: environments/dev
+
+      - name: Optional Checkov
+        if: vars.ENABLE_CHECKOV == 'true'
+        uses: bridgecrewio/checkov-action@v12
+        with:
+          directory: environments/dev
+          framework: terraform
+
+  terraform-plan:
+    name: Terraform Plan (Dev)
+    runs-on: ubuntu-latest
+    needs: terraform-check
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Terraform Init (Remote Backend)
+        working-directory: environments/dev
+        run: >
+          terraform init
+          -backend-config="use_azuread_auth=true"
+          -backend-config="use_oidc=true"
+          -backend-config="resource_group_name=${{ vars.TFSTATE_RESOURCE_GROUP }}"
+          -backend-config="storage_account_name=${{ vars.TFSTATE_STORAGE_ACCOUNT }}"
+          -backend-config="container_name=${{ vars.TFSTATE_CONTAINER }}"
+          -backend-config="key=dev.terraform.tfstate"
+
+      - name: Terraform Plan
+        working-directory: environments/dev
+        run: terraform plan -no-color -out=tfplan
+
+      - name: Upload Plan Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraform-plan-dev
+          path: environments/dev/tfplan
+          retention-days: 7
+
+  plan-approval:
+    name: Plan Approval Gate (Dev)
+    runs-on: ubuntu-latest
+    needs: terraform-plan
+    if: github.event_name == 'workflow_dispatch' && inputs.run_apply == true
+    environment: dev-plan-approval
+    steps:
+      - name: Approval Checkpoint
+        run: echo "Plan approved for dev apply."
+
+  terraform-apply:
+    name: Terraform Apply (Dev)
+    runs-on: ubuntu-latest
+    needs: plan-approval
+    if: github.event_name == 'workflow_dispatch' && inputs.run_apply == true
+    environment: dev
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Terraform Init (Remote Backend)
+        working-directory: environments/dev
+        run: >
+          terraform init
+          -backend-config="use_azuread_auth=true"
+          -backend-config="use_oidc=true"
+          -backend-config="resource_group_name=${{ vars.TFSTATE_RESOURCE_GROUP }}"
+          -backend-config="storage_account_name=${{ vars.TFSTATE_STORAGE_ACCOUNT }}"
+          -backend-config="container_name=${{ vars.TFSTATE_CONTAINER }}"
+          -backend-config="key=dev.terraform.tfstate"
+
+      - name: Download Plan Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: terraform-plan-dev
+          path: environments/dev
+
+      - name: Terraform Apply (Approved Plan)
+        working-directory: environments/dev
+        run: terraform apply -auto-approve tfplan

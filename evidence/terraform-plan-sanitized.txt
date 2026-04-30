@@ -1,0 +1,87 @@
+Run context:
+  workflow: Terraform Prod
+  run_id: 10428977431
+  actor: platform-engineer
+  ref: refs/heads/main
+  started_at: 2026-04-30T00:11:08Z
+
+Terraform used the selected providers to generate the following execution plan.
+Resource actions are indicated with the following symbols:
+  ~ update in-place
+  + create
+
+Terraform will perform the following actions:
+
+  # module.platform.module.network.azurerm_network_security_group.application will be updated in-place
+  ~ resource "azurerm_network_security_group" "application" {
+        id                  = "/subscriptions/***/resourceGroups/az-ir-platform-p-westeurope-rg-network/providers/Microsoft.Network/networkSecurityGroups/az-ir-platform-p-westeurope-vnet-nsg-application"
+        name                = "az-ir-platform-p-westeurope-vnet-nsg-application"
+      ~ security_rule       = [
+          - {
+              name                       = "allow-trusted-admin-to-app-http"
+              priority                   = 110
+              direction                  = "Inbound"
+              access                     = "Allow"
+              protocol                   = "Tcp"
+              source_address_prefixes    = [
+                "10.10.30.0/24",
+              ]
+              destination_port_range     = "80"
+            },
+          + {
+              name                       = "allow-trusted-admin-to-app-https"
+              priority                   = 110
+              direction                  = "Inbound"
+              access                     = "Allow"
+              protocol                   = "Tcp"
+              source_address_prefixes    = [
+                "10.10.30.0/24",
+              ]
+              destination_port_range     = "443"
+            },
+        ]
+        tags                = {
+            "business_unit" = "it-operations"
+            "cost_center"   = "CC-1000"
+            "environment"   = "prod"
+            "owner"         = "cloud-support-team"
+            "project"       = "az-ir-platform"
+        }
+    }
+
+  # module.platform.module.container_workload[0].azurerm_container_group.this will be created
+  + resource "azurerm_container_group" "this" {
+      + id                  = (known after apply)
+      + ip_address_type     = "Private"
+      + location            = "westeurope"
+      + name                = "az-ir-platform-p-westeurope-aci-app"
+      + os_type             = "Linux"
+      + resource_group_name = "az-ir-platform-p-westeurope-rg-network"
+      + restart_policy      = "Always"
+      + subnet_ids          = [
+          + "/subscriptions/***/resourceGroups/az-ir-platform-p-westeurope-rg-network/providers/Microsoft.Network/virtualNetworks/az-ir-platform-p-westeurope-vnet/subnets/snet-container",
+        ]
+
+      + container {
+          + cpu    = 0.5
+          + image  = "nginx:stable-alpine"
+          + memory = 1
+          + name   = "web"
+
+          + ports {
+              + port     = 80
+              + protocol = "TCP"
+            }
+        }
+    }
+
+Plan: 1 to add, 1 to change, 0 to destroy.
+
+Warnings:
+  - Value for undeclared variable "unused_tag_flag" was found in terraform.tfvars and ignored.
+  - Provider azurerm: "features" block uses defaults; review if strict settings are required for prod.
+
+Saved the plan to: tfplan
+
+To perform exactly these actions, run the following command to apply:
+    terraform apply "tfplan"

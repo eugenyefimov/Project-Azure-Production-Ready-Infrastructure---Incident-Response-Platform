@@ -1,0 +1,31 @@
+Run context:
+  workflow: Terraform Prod
+  run_id: 10428977431
+  actor: platform-engineer
+  ref: refs/heads/main
+  started_at: 2026-04-30T00:30:14Z
+
+module.platform.module.network.azurerm_network_security_group.application: Modifying... [id=/subscriptions/***/resourceGroups/az-ir-platform-p-westeurope-rg-network/providers/Microsoft.Network/networkSecurityGroups/az-ir-platform-p-westeurope-vnet-nsg-application]
+module.platform.module.network.azurerm_network_security_group.application: Modifications complete after 11s [id=/subscriptions/***/resourceGroups/az-ir-platform-p-westeurope-rg-network/providers/Microsoft.Network/networkSecurityGroups/az-ir-platform-p-westeurope-vnet-nsg-application]
+
+module.platform.module.container_workload[0].azurerm_container_group.this: Creating...
+module.platform.module.container_workload[0].azurerm_container_group.this: Still creating... [10s elapsed]
+module.platform.module.container_workload[0].azurerm_container_group.this: Still creating... [20s elapsed]
+module.platform.module.container_workload[0].azurerm_container_group.this: Creation complete after 31s [id=/subscriptions/***/resourceGroups/az-ir-platform-p-westeurope-rg-network/providers/Microsoft.ContainerInstance/containerGroups/az-ir-platform-p-westeurope-aci-app]
+
+Apply complete! Resources: 1 added, 1 changed, 0 destroyed.
+
+Outputs:
+
+alert_high_cpu_id = "/subscriptions/***/resourceGroups/az-ir-platform-p-westeurope-rg-network/providers/microsoft.insights/metricAlerts/alert-vm-high-cpu"
+alert_vm_down_id = "/subscriptions/***/resourceGroups/az-ir-platform-p-westeurope-rg-network/providers/microsoft.insights/metricAlerts/alert-vm-availability"
+application_vm_private_ip = "10.60.2.4"
+container_group_name = "az-ir-platform-p-westeurope-aci-app"
+container_private_ip = "10.60.4.5"
+log_analytics_workspace_name = "az-ir-platform-p-westeurope-law"
+network_resource_group_name = "az-ir-platform-p-westeurope-rg-network"
+
+Post-apply checks (operator notes):
+  - endpoint probe: healthy after 3 minutes
+  - action group delivery: one delayed notification (retry succeeded)
+  - no drift detected in immediate follow-up plan

@@ -1,0 +1,55 @@
+{
+  "schemaId": "azureMonitorCommonAlertSchema",
+  "data": {
+    "essentials": {
+      "alertId": "/subscriptions/***/providers/Microsoft.AlertsManagement/alerts/9f7d4c8b-0e8c-4cf2-bf7a-7d1e3178f36a",
+      "alertRule": "alert-service-availability-endpoint",
+      "severity": "Sev1",
+      "signalType": "Metric",
+      "monitorCondition": "Fired",
+      "monitoringService": "Platform",
+      "alertTargetIDs": [
+        "/subscriptions/***/resourceGroups/az-ir-platform-p-westeurope-rg-network/providers/Microsoft.Compute/virtualMachines/az-ir-platform-p-westeurope-vm-app-01"
+      ],
+      "configurationItems": [
+        "az-ir-platform-p-westeurope-vm-app-01"
+      ],
+      "originAlertId": "f88dd2ee-1bd6-4af5-bdf0-a9b2f4f5f4d2",
+      "firedDateTime": "2026-04-30T00:18:26.129Z",
+      "description": "Endpoint probe failure threshold reached for production application service.",
+      "essentialsVersion": "1.0",
+      "alertContextVersion": "1.0",
+      "investigationLink": "https://portal.azure.com/#view/Microsoft_Azure_Monitoring_Alerts/AlertDetailsV2.ReactView/alertId/%2fsubscriptions%2f***%2fproviders%2fMicrosoft.AlertsManagement%2falerts%2f9f7d4c8b-0e8c-4cf2-bf7a-7d1e3178f36a"
+    },
+    "alertContext": {
+      "properties": {
+        "resourceType": "virtualMachines",
+        "resourceGroupName": "az-ir-platform-p-westeurope-rg-network",
+        "resourceName": "az-ir-platform-p-westeurope-vm-app-01"
+      },
+      "conditionType": "SingleResourceMultipleMetricCriteria",
+      "condition": {
+        "windowSize": "PT5M",
+        "allOf": [
+          {
+            "metricName": "Availability",
+            "metricNamespace": "Microsoft.Compute/virtualMachines",
+            "operator": "LessThan",
+            "threshold": "1",
+            "timeAggregation": "Average",
+            "dimensions": [],
+            "metricValue": 0,
+            "webTestName": "prod-app-endpoint-check"
+          }
+        ]
+      }
+    },
+    "customProperties": {
+      "environment": "prod",
+      "service": "customer-api",
+      "oncallRotation": "platform-primary",
+      "runbook": "runbooks/vm-not-reachable.md",
+      "changeWindowRef": "CHG-2026-04-30-014"
+    }
+  }
+}
