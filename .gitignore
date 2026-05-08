@@ -1,0 +1,60 @@
+# Terraform state and working directories
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Terraform variable files (keep example files in repo)
+terraform.tfvars
+terraform.tfvars.json
+*.auto.tfvars
+*.auto.tfvars.json
+*.tfvars
+!*.tfvars.example
+
+# Secrets and local env files
+.env
+.env.*
+*.pem
+*.key
+*.pfx
+*.p12
+kubeconfig
+*.kubeconfig
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*.so
+.pytest_cache/
+.mypy_cache/
+.venv/
+venv/
+
+# Node artifacts
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build/temp outputs
+build/
+dist/
+tmp/
+temp/
+coverage/
+
+# IDE/editor metadata
+.vscode/
+.idea/
+.history/
+
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
