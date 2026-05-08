@@ -115,8 +115,6 @@ Add the following **Repository Variables**:
 - `TF_CONTAINER_IMAGE` (example: `nginx:stable-alpine`)
 - `TF_CONTAINER_CPU` (example: `0.5`)
 - `TF_CONTAINER_MEMORY_GB` (example: `1`)
-- `ENABLE_TFSEC` (`true`/`false`, optional)
-- `ENABLE_CHECKOV` (`true`/`false`, optional)
 
 Add the following **Repository Secrets**:
 
@@ -126,7 +124,7 @@ Add the following **Repository Secrets**:
 ## Workflow Execution
 
 - Pull requests / pushes to `main`:
-  - run environment-specific `fmt`, `validate`, optional security scans, and `plan`
+  - run environment-specific `fmt`, `validate`, mandatory security scans, and `plan`
 - Manual apply for `dev`/`staging`:
   1. Open the specific workflow (`Terraform Dev` or `Terraform Staging`)
   2. Click **Run workflow**

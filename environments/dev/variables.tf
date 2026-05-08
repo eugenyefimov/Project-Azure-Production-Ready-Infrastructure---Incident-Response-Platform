@@ -16,6 +16,11 @@ variable "project_name" {
 variable "environment" {
   description = "Deployment environment (dev, staging, prod)."
   type        = string
+
+  validation {
+    condition     = var.environment == "dev"
+    error_message = "environment must be set to dev in the dev root."
+  }
 }
 
 variable "location" {

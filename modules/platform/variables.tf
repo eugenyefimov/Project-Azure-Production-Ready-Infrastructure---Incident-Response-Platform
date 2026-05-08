@@ -138,8 +138,12 @@ variable "synthetic_check_url" {
   default     = null
 
   validation {
-    condition     = var.synthetic_check_url == null || can(regex("^https?://", var.synthetic_check_url))
-    error_message = "synthetic_check_url must be null or start with http:// or https://."
+    condition = !var.enable_synthetic_availability || (
+      var.synthetic_check_url != null
+      && length(trim(var.synthetic_check_url)) > 0
+      && can(regex("^https?://", var.synthetic_check_url))
+    )
+    error_message = "synthetic_check_url must be a non-empty http:// or https:// URL when enable_synthetic_availability is true."
   }
 }
 

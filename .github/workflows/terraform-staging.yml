@@ -26,7 +26,7 @@ permissions:
 
 concurrency:
   group: terraform-staging-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 env:
   TF_IN_AUTOMATION: "true"
@@ -55,8 +55,8 @@ env:
   TF_VAR_log_retention_in_days: ${{ vars.TF_LOG_RETENTION_IN_DAYS }}
   TF_VAR_cpu_alert_threshold_percent: ${{ vars.TF_CPU_ALERT_THRESHOLD_PERCENT }}
   TF_VAR_monitor_action_group_email_receivers: ${{ vars.TF_ACTION_GROUP_EMAIL_RECEIVERS_JSON }}
-  TF_VAR_enable_synthetic_availability: ${{ vars.TF_ENABLE_SYNTHETIC_AVAILABILITY || 'false' }}
-  TF_VAR_synthetic_check_url: ${{ vars.TF_SYNTHETIC_CHECK_URL || 'https://example.invalid/health' }}
+  TF_VAR_enable_synthetic_availability: ${{ vars.TF_ENABLE_SYNTHETIC_AVAILABILITY == 'true' && vars.TF_SYNTHETIC_CHECK_URL != '' && 'true' || 'false' }}
+  TF_VAR_synthetic_check_url: ${{ vars.TF_SYNTHETIC_CHECK_URL || '' }}
   TF_VAR_synthetic_frequency_seconds: ${{ vars.TF_SYNTHETIC_FREQUENCY_SECONDS || '300' }}
   TF_VAR_synthetic_timeout_seconds: ${{ vars.TF_SYNTHETIC_TIMEOUT_SECONDS || '30' }}
   TF_VAR_synthetic_failed_location_count: ${{ vars.TF_SYNTHETIC_FAILED_LOCATION_COUNT || '2' }}
@@ -190,6 +190,9 @@ jobs:
     needs: plan-approval
     if: github.event_name == 'workflow_dispatch' && inputs.run_apply == true && github.ref == 'refs/heads/main'
     environment: staging
+    concurrency:
+      group: terraform-staging-apply
+      cancel-in-progress: false
     defaults:
       run:
         shell: bash

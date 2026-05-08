@@ -24,7 +24,7 @@ resource "azurerm_monitor_action_group" "this" {
 }
 
 locals {
-  synthetic_monitoring_enabled = var.enable_synthetic_availability && var.synthetic_check_url != null
+  synthetic_monitoring_enabled = var.enable_synthetic_availability && var.synthetic_check_url != null && length(trim(var.synthetic_check_url)) > 0
 }
 
 resource "azurerm_monitor_diagnostic_setting" "targets" {
