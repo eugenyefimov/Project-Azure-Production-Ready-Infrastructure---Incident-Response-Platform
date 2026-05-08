@@ -28,3 +28,23 @@ output "high_cpu_alert_id" {
   description = "Metric alert ID for high CPU monitoring."
   value       = azurerm_monitor_metric_alert.high_cpu.id
 }
+
+output "synthetic_application_insights_id" {
+  description = "Application Insights ID used for synthetic service monitoring."
+  value       = try(azurerm_application_insights.synthetic[0].id, null)
+}
+
+output "synthetic_web_test_id" {
+  description = "Synthetic web test ID for service endpoint availability checks."
+  value       = try(azurerm_application_insights_web_test.service_endpoint[0].id, null)
+}
+
+output "service_availability_alert_id" {
+  description = "Alert ID for synthetic service availability failures."
+  value       = try(azurerm_monitor_metric_alert.service_availability_down[0].id, null)
+}
+
+output "service_latency_alert_id" {
+  description = "Alert ID for synthetic service latency degradation."
+  value       = try(azurerm_monitor_scheduled_query_rules_alert_v2.service_latency_high[0].id, null)
+}

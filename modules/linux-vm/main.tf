@@ -50,7 +50,7 @@ resource "azurerm_linux_virtual_machine" "this" {
     publisher = "Canonical"
     offer     = "0001-com-ubuntu-server-jammy"
     sku       = "22_04-lts-gen2"
-    version   = "latest"
+    version   = var.source_image_version
   }
 
   # Cloud-init installs and starts Nginx on first boot.

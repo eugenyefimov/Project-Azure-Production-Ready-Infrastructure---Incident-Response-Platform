@@ -1,5 +1,9 @@
+locals {
+  normalized_prefix = substr(regexreplace(lower(var.name_prefix), "[^a-z0-9-]", "-"), 0, 40)
+}
+
 resource "azurerm_policy_definition" "require_tags" {
-  name         = "pd-require-tags-platform"
+  name         = "pd-${local.normalized_prefix}-require-tags"
   policy_type  = "Custom"
   mode         = "Indexed"
   display_name = "Require mandatory tags on resources"
@@ -41,7 +45,7 @@ resource "azurerm_policy_definition" "require_tags" {
 }
 
 resource "azurerm_policy_definition" "deny_public_ip" {
-  name         = "pd-deny-public-ip-platform"
+  name         = "pd-${local.normalized_prefix}-deny-public-ip"
   policy_type  = "Custom"
   mode         = "All"
   display_name = "Deny public IP resources"
@@ -59,7 +63,7 @@ resource "azurerm_policy_definition" "deny_public_ip" {
 }
 
 resource "azurerm_policy_definition" "allowed_vm_sizes" {
-  name         = "pd-allowed-vm-sizes-platform"
+  name         = "pd-${local.normalized_prefix}-allowed-vm-sizes"
   policy_type  = "Custom"
   mode         = "All"
   display_name = "Allow only approved VM sizes"

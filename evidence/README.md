@@ -73,16 +73,16 @@ The goal is to preserve evidence quality suitable for incident review and audit 
   - monthly reliability review
   - change-risk correlation and postmortem support
 
-## 7) Raw End-to-End Incident Bundle
+## 7) Realistic End-to-End Incident Walkthrough
 
-- Folder: `incidents/raw-incident-01/`
+- Folder: `incidents/realistic-end-to-end-scenario/`
 - Proves:
-  - raw-style signal-to-fix evidence chain from a multi-factor incident
-  - responders pivoted from wrong initial hypothesis to correct dual-fault model
-  - recovery was validated with post-fix metrics and alert silence window
+  - end-to-end support workflow for a realistic VM CPU incident
+  - explicit separation of real control implementation vs sanitized/simulated evidence
+  - closure validation and prevention actions in support-oriented language
 - Operations usage:
-  - skeptical technical review and incident drill playback
-  - interview walkthrough: alert -> logs -> commands -> fix -> verify
+  - interview walkthrough: alert -> triage -> mitigation -> validation -> follow-up
+  - reviewer validation of claim-to-code consistency
 
 ## Evidence Review Guidance
 

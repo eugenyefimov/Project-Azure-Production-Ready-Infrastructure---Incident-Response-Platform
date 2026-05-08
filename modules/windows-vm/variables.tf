@@ -55,3 +55,9 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "source_image_version" {
+  description = "Windows image version pin to avoid non-deterministic rebuilds."
+  type        = string
+  default     = "20348.2849.250207"
+}

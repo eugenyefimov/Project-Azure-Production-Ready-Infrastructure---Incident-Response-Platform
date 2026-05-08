@@ -1,38 +1,127 @@
 # Log Analytics Query Results (Sanitized Samples)
 
-These are representative outputs captured from investigation queries used during active incidents.
+These are representative outputs and KQL snippets used during investigations. They are intentionally small and focused on what an on-call engineer would actually run.
 
 ## Query A: Failed Logins by Account and Source (Last 60 Minutes)
 
-| Time Window (UTC)     | Account            | Source IP     | Host                                  | FailedAttempts |
-|-----------------------|--------------------|---------------|---------------------------------------|----------------|
-| 2026-04-30 08:00-09:00| svc-backup-agent   | 10.20.14.11   | az-ir-platform-p-westeurope-vm-mgmt-01| 3              |
-| 2026-04-30 08:00-09:00| admin.platform     | 185.142.41.77 | az-ir-platform-p-westeurope-vm-mgmt-01| 14             |
-| 2026-04-30 08:00-09:00| admin.platform     | 185.142.41.79 | az-ir-platform-p-westeurope-vm-mgmt-01| 9              |
-| 2026-04-30 08:00-09:00| helpdesk.ops       | 10.10.30.24   | az-ir-platform-p-westeurope-vm-mgmt-01| 2              |
+**KQL**
+
+```kusto
+SecurityEvent
+| where TimeGenerated > ago(60m)
+| where EventID in (4625, 529) // failed logons
+| summarize FailedAttempts = count()
+          by bin(TimeGenerated, 15m),
+             Account = tostring(TargetUserName),
+             SourceIP = tostring(IpAddress),
+             Host = Computer
+| sort by FailedAttempts desc
+```
+
+**Sample Output**
+
+| Time Window (UTC)     | Account            | Source IP     | Host                                   | FailedAttempts |
+|-----------------------|--------------------|---------------|----------------------------------------|----------------|
+| 2026-04-30 08:00-09:00| svc-backup-agent   | 10.20.14.11   | az-ir-platform-p-westeurope-vm-mgmt-01 | 3              |
+| 2026-04-30 08:00-09:00| admin.platform     | 185.142.41.77 | az-ir-platform-p-westeurope-vm-mgmt-01 | 14             |
+| 2026-04-30 08:00-09:00| admin.platform     | 185.142.41.79 | az-ir-platform-p-westeurope-vm-mgmt-01 | 9              |
+| 2026-04-30 08:00-09:00| helpdesk.ops       | 10.10.30.24   | az-ir-platform-p-westeurope-vm-mgmt-01 | 2              |
 
 Operator note:
 - `svc-backup-agent` failures were expected after password rotation drift; corrected by secret sync.
-- public IP attempts escalated to security triage due to burst behavior.
+- Public IP attempts escalated to security triage due to burst behavior.
 
 ## Query B: VM Health Trends (Heartbeat Gaps, Last 24 Hours)
 
-| Host                                  | LastHeartbeatUTC      | MinutesSinceHeartbeat | HealthState |
-|---------------------------------------|------------------------|-----------------------|-------------|
-| az-ir-platform-p-westeurope-vm-app-01 | 2026-04-30 00:46:58    | 1                     | Healthy     |
-| az-ir-platform-p-westeurope-vm-mgmt-01| 2026-04-30 00:46:31    | 1                     | Healthy     |
-| az-ir-platform-s-westeurope-vm-app-01 | 2026-04-30 00:40:11    | 7                     | Warning     |
+**KQL**
+
+```kusto
+Heartbeat
+| where TimeGenerated > ago(24h)
+| summarize LastHeartbeatUTC = max(TimeGenerated)
+          by Computer
+| extend MinutesSinceHeartbeat = datetime_diff("minute", now(), LastHeartbeatUTC)
+| extend HealthState = case(
+    MinutesSinceHeartbeat <= 5, "Healthy",
+    MinutesSinceHeartbeat <= 15, "Warning",
+    "Critical"
+  )
+| order by MinutesSinceHeartbeat asc
+```
+
+**Sample Output**
+
+| Host                                   | LastHeartbeatUTC      | MinutesSinceHeartbeat | HealthState |
+|----------------------------------------|------------------------|-----------------------|-------------|
+| az-ir-platform-p-westeurope-vm-app-01  | 2026-04-30 00:46:58    | 1                     | Healthy     |
+| az-ir-platform-p-westeurope-vm-mgmt-01 | 2026-04-30 00:46:31    | 1                     | Healthy     |
+| az-ir-platform-s-westeurope-vm-app-01  | 2026-04-30 00:40:11    | 7                     | Warning     |
 
 Operator note:
-- staging app VM heartbeat delay correlated with patch cycle; no user impact.
+- Staging app VM heartbeat delay correlated with patch cycle; no user impact.
 
 ## Query C: Resource Anomaly Candidates (CPU Deviation >= 2x Baseline)
 
-| TimeGeneratedUTC      | Host                                  | CurrentCPU | BaselineCPU | DeviationRatio |
-|-----------------------|---------------------------------------|------------|-------------|----------------|
-| 2026-04-29 14:10:00   | az-ir-platform-p-westeurope-vm-app-01 | 83.4       | 33.7        | 2.47           |
-| 2026-04-29 14:25:00   | az-ir-platform-p-westeurope-vm-app-01 | 79.1       | 34.8        | 2.27           |
-| 2026-04-29 14:40:00   | az-ir-platform-p-westeurope-vm-app-01 | 68.2       | 35.1        | 1.94           |
+**KQL**
+
+```kusto
+let Lookback = 24h;
+Perf
+| where TimeGenerated > ago(Lookback)
+| where ObjectName == "Processor" and CounterName == "% Processor Time" and InstanceName == "_Total"
+| summarize
+    CurrentCPU = avg(CounterValue),
+    BaselineCPU = percentile(CounterValue, 50)
+    by bin(TimeGenerated, 5m), Computer
+| extend DeviationRatio = CurrentCPU / BaselineCPU
+| where DeviationRatio >= 2.0
+| order by DeviationRatio desc
+```
+
+**Sample Output**
+
+| TimeGeneratedUTC      | Host                                   | CurrentCPU | BaselineCPU | DeviationRatio |
+|-----------------------|----------------------------------------|------------|-------------|----------------|
+| 2026-04-29 14:10:00   | az-ir-platform-p-westeurope-vm-app-01  | 83.4       | 33.7        | 2.47           |
+| 2026-04-29 14:25:00   | az-ir-platform-p-westeurope-vm-app-01  | 79.1       | 34.8        | 2.27           |
+| 2026-04-29 14:40:00   | az-ir-platform-p-westeurope-vm-app-01  | 68.2       | 35.1        | 1.94           |
 
 Operator note:
-- final row dropped below alert threshold but remained elevated; investigation kept open for 30 more minutes.
+- Final row dropped below alert threshold but remained elevated; investigation kept open for 30 more minutes.
+
+## Query D: NSG Changes Around Incident Window
+
+**KQL**
+
+```kusto
+AzureActivity
+| where TimeGenerated between (datetime(2026-04-30T00:00:00Z) .. datetime(2026-04-30T01:00:00Z))
+| where OperationNameValue has "networkSecurityGroups"
+| project TimeGenerated,
+          OperationName = OperationNameValue,
+          ResourceGroup,
+          Resource,
+          Status = ActivityStatusValue,
+          Caller
+| order by TimeGenerated asc
+```
+
+Use this during network incidents to confirm NSG rule updates around outage start.
+
+## Query E: Backup Job Failures (Recovery Services Vault)
+
+**KQL**
+
+```kusto
+AzureDiagnostics
+| where Category == "AzureBackupReport"
+| where TimeGenerated > ago(24h)
+| where OperationName == "Backup"
+| summarize FailedJobs = countif(Status_s != "Completed"),
+          SuccessfulJobs = countif(Status_s == "Completed")
+          by bin(TimeGenerated, 1h), BackupItemUniqueId_s, BackupItemFriendlyName_s
+| where FailedJobs > 0
+| order by TimeGenerated desc
+```
+
+Use this around backup validation windows to identify failing protected items and correlate with `vm-recovery.md` / `backup-verification.md`.

@@ -125,6 +125,54 @@ variable "monitor_action_group_email_receivers" {
   default = []
 }
 
+variable "enable_synthetic_availability" {
+  description = "Enable Application Insights synthetic endpoint checks."
+  type        = bool
+  default     = false
+}
+
+variable "synthetic_check_url" {
+  description = "Public URL used by synthetic endpoint checks."
+  type        = string
+  default     = null
+}
+
+variable "synthetic_frequency_seconds" {
+  description = "Synthetic check frequency in seconds."
+  type        = number
+  default     = 300
+}
+
+variable "synthetic_timeout_seconds" {
+  description = "Synthetic check timeout in seconds."
+  type        = number
+  default     = 30
+}
+
+variable "synthetic_failed_location_count" {
+  description = "Probe locations that must fail before availability alert fires."
+  type        = number
+  default     = 2
+}
+
+variable "synthetic_latency_threshold_ms" {
+  description = "Latency threshold in milliseconds for synthetic checks."
+  type        = number
+  default     = 2000
+}
+
+variable "synthetic_alert_severity_availability" {
+  description = "Severity for synthetic availability alerts."
+  type        = number
+  default     = 1
+}
+
+variable "synthetic_alert_severity_latency" {
+  description = "Severity for synthetic latency alerts."
+  type        = number
+  default     = 2
+}
+
 variable "enable_backup" {
   description = "Whether to deploy backup vault, policy, and protection."
   type        = bool

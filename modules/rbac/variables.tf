@@ -2,18 +2,33 @@ variable "pipeline_principal_object_id" {
   description = "Object ID of the GitHub OIDC service principal."
   type        = string
   default     = null
+
+  validation {
+    condition     = var.pipeline_principal_object_id == null || can(regex("^[0-9a-fA-F-]{36}$", var.pipeline_principal_object_id))
+    error_message = "pipeline_principal_object_id must be null or a valid GUID."
+  }
 }
 
 variable "admin_user_object_id" {
   description = "Object ID of the admin Entra ID user/group."
   type        = string
   default     = null
+
+  validation {
+    condition     = var.admin_user_object_id == null || can(regex("^[0-9a-fA-F-]{36}$", var.admin_user_object_id))
+    error_message = "admin_user_object_id must be null or a valid GUID."
+  }
 }
 
 variable "monitoring_reader_principal_object_id" {
   description = "Object ID for read-only monitoring access user/group."
   type        = string
   default     = null
+
+  validation {
+    condition     = var.monitoring_reader_principal_object_id == null || can(regex("^[0-9a-fA-F-]{36}$", var.monitoring_reader_principal_object_id))
+    error_message = "monitoring_reader_principal_object_id must be null or a valid GUID."
+  }
 }
 
 variable "resource_group_scope_id" {

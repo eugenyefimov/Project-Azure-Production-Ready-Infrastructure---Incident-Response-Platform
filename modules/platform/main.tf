@@ -26,6 +26,7 @@ locals {
   container_group_name         = "${local.naming_prefix}-aci-app"
 
   common_tags = merge(
+    var.extra_tags,
     {
       project       = var.project_name
       environment   = var.environment
@@ -35,8 +36,7 @@ locals {
       managed_by    = "terraform"
       platform      = "azure"
       environment_tier = var.environment
-    },
-    var.extra_tags
+    }
   )
 }
 
@@ -66,6 +66,7 @@ module "application_vm" {
   vm_size              = var.vm_size
   admin_username       = var.admin_username
   admin_ssh_public_key = var.admin_ssh_public_key
+  source_image_version = var.linux_source_image_version
   tags                 = local.common_tags
 }
 
@@ -83,6 +84,7 @@ module "management_windows_vm" {
   vm_size             = var.windows_vm_size
   admin_username      = var.windows_admin_username
   admin_password      = var.windows_admin_password
+  source_image_version = var.windows_source_image_version
   tags                = local.common_tags
 }
 
@@ -98,6 +100,14 @@ module "monitoring" {
   action_group_short_name      = local.monitor_action_group_short
   action_group_email_receivers = var.monitor_action_group_email_receivers
   cpu_alert_threshold_percent  = var.cpu_alert_threshold_percent
+  enable_synthetic_availability       = var.enable_synthetic_availability
+  synthetic_check_url                 = var.synthetic_check_url
+  synthetic_frequency_seconds         = var.synthetic_frequency_seconds
+  synthetic_timeout_seconds           = var.synthetic_timeout_seconds
+  synthetic_failed_location_count     = var.synthetic_failed_location_count
+  synthetic_latency_threshold_ms      = var.synthetic_latency_threshold_ms
+  synthetic_alert_severity_availability = var.synthetic_alert_severity_availability
+  synthetic_alert_severity_latency    = var.synthetic_alert_severity_latency
   diagnostic_target_resource_ids = compact([
     module.network.virtual_network_id,
     module.application_vm.vm_id,
@@ -165,6 +175,7 @@ module "governance" {
   source = "../governance"
 
   scope_id                 = data.azurerm_resource_group.network.id
+  name_prefix              = local.naming_prefix
   location                 = var.location
   required_tags            = var.governance_required_tags
   allowed_vm_sizes         = var.governance_allowed_vm_sizes

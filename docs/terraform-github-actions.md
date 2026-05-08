@@ -23,11 +23,13 @@ Each environment workflow follows the same maturity pattern:
 
 1. `terraform fmt -check -recursive`
 2. `terraform init -backend=false` and `terraform validate`
-3. optional security scan stage (`tfsec` / `checkov`) controlled by repository variables
+3. static analysis and policy checks: `tflint`, `tfsec`, `checkov`
 4. `terraform plan -out=tfplan`
-5. upload plan artifact
-6. manual **plan approval gate** (GitHub Environment)
-7. manual `terraform apply` using the previously approved plan artifact
+5. generate `sha256` checksum for plan file
+6. upload plan + checksum artifact
+7. manual **plan approval gate** (GitHub Environment)
+8. verify checksum in apply job before `terraform apply`
+9. manual `terraform apply` using the previously approved plan artifact
 
 The production workflow has additional hard stops:
 
@@ -35,6 +37,8 @@ The production workflow has additional hard stops:
 - apply is allowed only via `workflow_dispatch`
 - operator must provide `approve_production_apply=APPROVE-PROD-APPLY`
 - apply only from `main` and through protected `prod` environment approvals
+
+Lower environments were also hardened so `apply` is only allowed from `main` when manually dispatched.
 
 ## Why OIDC Is Better Than Static Credentials
 
@@ -63,6 +67,10 @@ For production pipelines, this is strongly preferred over static client secrets.
 5. Configure GitHub Environment protections:
    - `dev`, `staging`, `prod` environments with required reviewers
    - `dev-plan-approval`, `staging-plan-approval`, `prod-plan-approval` environments for plan gates
+6. Configure branch protections for `main`:
+   - required pull request reviews
+   - status checks required before merge (all Terraform check/plan jobs)
+   - restrict direct pushes
 
 ## GitHub Repository Configuration
 
@@ -88,6 +96,14 @@ Add the following **Repository Variables**:
 - `TF_LOG_RETENTION_IN_DAYS`
 - `TF_CPU_ALERT_THRESHOLD_PERCENT`
 - `TF_ACTION_GROUP_EMAIL_RECEIVERS_JSON` (example: `[{"name":"cloudsupport-oncall","email_address":"oncall@example.com"}]`)
+- `TF_ENABLE_SYNTHETIC_AVAILABILITY` (`true`/`false`, optional; defaults to `false`)
+- `TF_SYNTHETIC_CHECK_URL` (example: `https://status.example.net/health`, required only when synthetic checks are enabled)
+- `TF_SYNTHETIC_FREQUENCY_SECONDS` (example: `300`, optional)
+- `TF_SYNTHETIC_TIMEOUT_SECONDS` (example: `30`, optional)
+- `TF_SYNTHETIC_FAILED_LOCATION_COUNT` (example: `2`, optional)
+- `TF_SYNTHETIC_LATENCY_THRESHOLD_MS` (example: `2000`, optional)
+- `TF_SYNTHETIC_ALERT_SEVERITY_AVAILABILITY` (example: `1`, optional)
+- `TF_SYNTHETIC_ALERT_SEVERITY_LATENCY` (example: `2`, optional)
 - `TF_BACKUP_TIME_UTC` (example: `23:00`)
 - `TF_BACKUP_DAILY_RETENTION_COUNT`
 - `TF_OWNER`
@@ -190,13 +206,15 @@ The practical control model is:
 - Separate workflow isolation by environment
 - Production apply requires explicit confirmation phrase
 - Terraform state uses environment-specific keys in remote backend
+- Plan integrity is verified with SHA-256 checksum before apply
+- Lint and security scanning run for every environment workflow
 
 ### Risks To Watch
 
 - `terraform apply -auto-approve` is non-interactive: rely on strong environment approval gates
 - Broad RBAC roles can still be risky if not scoped tightly
 - Public IP toggles must be disabled (`false`) in higher environments unless explicitly justified
-- Optional security scans are bypassed when not enabled (`ENABLE_TFSEC` / `ENABLE_CHECKOV`)
+- Branch/environment protections must remain enforced in GitHub settings; workflows assume those controls exist
 
 ### Recommended Improvements
 

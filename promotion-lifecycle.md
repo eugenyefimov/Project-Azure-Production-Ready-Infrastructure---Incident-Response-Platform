@@ -178,7 +178,7 @@ Related incident: `INC-2026-05-18-002`
 
 - **Rollback run ID:** `10486736788`
 - **Action:** keep NSG hotfix + roll back image from `REL-2026.05.18.1` to `REL-2026.05.17.7`
-- **Evidence:** `evidence/incidents/raw-incident-01/05-terraform-apply-raw-snippet.txt`
+- **Evidence:** `evidence/terraform-apply-sanitized.txt`
 
 Rollback snippet:
 

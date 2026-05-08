@@ -83,7 +83,7 @@ Chain:
   - source: `evidence/live-artifacts/activity-log-entries.csv`
 - **Log Analytics query references:**
   - `incident-complex.md` section `Evidence (Alerts, Logs, Commands)`
-  - `evidence/incidents/raw-incident-01/03-log-analytics-raw-results.txt`
+  - `evidence/log-analytics-query-results.md`
   - `evidence/live-artifacts/log-analytics-query-exports.md` -> `Export E`
 - **CI/CD run IDs:**
   - `10486732044` (pre-incident release apply)
@@ -127,7 +127,7 @@ Example: investigate `INC-2026-05-18-002`.
 2. Pivot to activity entries by change ticket/correlation IDs:
    - `e15653c1-...` (introducing write)
    - `c703c664-...` (hotfix write)
-3. Validate fault signal in `evidence/incidents/raw-incident-01/03-log-analytics-raw-results.txt` and `Export E`.
+3. Validate fault signal in `evidence/log-analytics-query-results.md` and `Export E`.
 4. Confirm remediation run in `evidence/live-artifacts/terraform-apply-history.csv` (`10486736788`), and canceled duplicate dispatch `10486736910`.
 5. Confirm closure controls in `incident-complex.md` and follow-up IDs `CA-CX-001..004`.
 

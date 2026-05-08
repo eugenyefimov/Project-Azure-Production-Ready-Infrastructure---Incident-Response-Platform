@@ -21,6 +21,14 @@ module "platform" {
   log_retention_in_days             = var.log_retention_in_days
   cpu_alert_threshold_percent       = var.cpu_alert_threshold_percent
   monitor_action_group_email_receivers = var.monitor_action_group_email_receivers
+  enable_synthetic_availability     = var.enable_synthetic_availability
+  synthetic_check_url               = var.synthetic_check_url
+  synthetic_frequency_seconds       = var.synthetic_frequency_seconds
+  synthetic_timeout_seconds         = var.synthetic_timeout_seconds
+  synthetic_failed_location_count   = var.synthetic_failed_location_count
+  synthetic_latency_threshold_ms    = var.synthetic_latency_threshold_ms
+  synthetic_alert_severity_availability = var.synthetic_alert_severity_availability
+  synthetic_alert_severity_latency  = var.synthetic_alert_severity_latency
   enable_backup                     = var.enable_backup
   backup_time_utc                   = var.backup_time_utc
   backup_daily_retention_count      = var.backup_daily_retention_count

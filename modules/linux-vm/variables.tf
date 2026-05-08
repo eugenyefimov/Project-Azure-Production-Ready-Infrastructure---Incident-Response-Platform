@@ -55,3 +55,9 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "source_image_version" {
+  description = "Linux image version pin to avoid non-deterministic rebuilds."
+  type        = string
+  default     = "22.04.202502130"
+}
