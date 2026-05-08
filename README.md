@@ -83,15 +83,15 @@ The platform is intentionally VM-centric (fits cloud support / operations role e
 
 ```mermaid
 flowchart LR
-  GH[GitHub Actions] --> TF[Terraform]
-  TF --> RG[Resource Group per Environment]
-  RG --> VNET[VNet + Subnets + NSGs]
-  VNET --> LINUX[Linux VM (Nginx)]
-  VNET --> WIN[Optional Windows VM]
-  RG --> LAW[Log Analytics Workspace]
-  LAW --> ALERTS[Metric Alerts]
-  ALERTS --> AG[Action Group]
-  RG --> RSV[Optional Recovery Services Vault]
+  GH["GitHub Actions"] --> TF["Terraform"];
+  TF --> RG["Resource Group per Environment"];
+  RG --> VNET["VNet + Subnets + NSGs"];
+  VNET --> LINUX["Linux VM (Nginx)"];
+  VNET --> WIN["Optional Windows VM"];
+  RG --> LAW["Log Analytics Workspace"];
+  LAW --> ALERTS["Metric Alerts"];
+  ALERTS --> AG["Action Group"];
+  RG --> RSV["Optional Recovery Services Vault"];
 ```
 
 Key code entry points:
@@ -130,11 +130,11 @@ Deep dive:
 
 ```mermaid
 flowchart LR
-  DETECT[Detect alert/signal] --> ACK[Acknowledge + assign]
-  ACK --> TRIAGE[Triage: network/compute/app/dependency]
-  TRIAGE --> MITIGATE[Mitigate (prefer CI/CD change path)]
-  MITIGATE --> VALIDATE[Validate recovery + watch window]
-  VALIDATE --> POST[Postmortem + corrective actions + evidence pack]
+  DETECT["Detect alert/signal"] --> ACK["Acknowledge + assign"];
+  ACK --> TRIAGE["Triage: network/compute/app/dependency"];
+  TRIAGE --> MITIGATE["Mitigate (prefer CI/CD change path)"];
+  MITIGATE --> VALIDATE["Validate recovery + watch window"];
+  VALIDATE --> POST["Postmortem + corrective actions + evidence pack"];
 ```
 
 Evidence template:
