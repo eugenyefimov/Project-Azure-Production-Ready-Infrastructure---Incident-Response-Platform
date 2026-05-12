@@ -1,0 +1,4 @@
+Status: Simulated/Sanitized Sample
+capture_time_utc,environment,policy_assignment,policy_definition,scope,resource_name,compliance_state,remediation_status,notes
+2026-05-10T09:00:00Z,prod,pa-allowed-vm-sizes,pd-az-ir-platform-p-westeurope-allowed-vm-sizes,/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-prod,prod-vm-app-01,Compliant,None,vm size in allowlist
+2026-05-10T09:00:00Z,prod,pa-deny-public-ip,pd-az-ir-platform-p-westeurope-deny-public-ip,/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-prod,pip-prod-app-01,NonCompliant,Denied by policy,test create blocked

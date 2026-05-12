@@ -1,3 +1,6 @@
+Status: Simulated/Sanitized Sample
+Scope: Portfolio repository. No live tenant data or customer data is included.
+
 Run context:
   workflow: Terraform Prod
   run_id: 10428977431
@@ -24,7 +27,7 @@ Terraform will perform the following actions:
               access                     = "Allow"
               protocol                   = "Tcp"
               source_address_prefixes    = [
-                "10.10.30.0/24",
+                "203.0.113.0/24",
               ]
               destination_port_range     = "80"
             },
@@ -35,7 +38,7 @@ Terraform will perform the following actions:
               access                     = "Allow"
               protocol                   = "Tcp"
               source_address_prefixes    = [
-                "10.10.30.0/24",
+                "203.0.113.0/24",
               ]
               destination_port_range     = "443"
             },

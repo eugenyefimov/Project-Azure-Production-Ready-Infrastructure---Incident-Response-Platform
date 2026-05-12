@@ -1,5 +1,8 @@
 # Immutable Incident Evidence Index
 
+Status: Simulated/Sanitized Sample  
+Scope: Portfolio repository. No live tenant data or customer data is included.
+
 This index links incident evidence by immutable IDs so each case can be traced end-to-end:
 
 `alert -> logs -> change -> fix -> follow-up`

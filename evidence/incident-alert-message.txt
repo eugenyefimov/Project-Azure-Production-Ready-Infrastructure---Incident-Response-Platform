@@ -1,3 +1,6 @@
+Status: Simulated/Sanitized Sample
+Scope: Portfolio repository. No live tenant data or customer data is included.
+
 [Teams | #inc-prod-platform | 2026-04-30 00:19 UTC]
 
 SEV-1 declared: customer-api availability degradation (prod)

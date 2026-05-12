@@ -1,5 +1,8 @@
 # Log Analytics Query Exports (Sanitized)
 
+Status: Simulated/Sanitized Sample  
+Scope: Portfolio repository. No live tenant data or customer data is included.
+
 Representative query result exports from multiple dates and incident classes.
 
 What this artifact proves:
@@ -37,9 +40,9 @@ Result table:
 
 ```text
 Account,IpAddress,Computer,FailedAttempts
-admin.platform,185.142.41.77,az-ir-platform-p-westeurope-vm-mgmt-01,14
-admin.platform,185.142.41.79,az-ir-platform-p-westeurope-vm-mgmt-01,9
-svc-backup-agent,10.20.14.11,az-ir-platform-p-westeurope-vm-mgmt-01,3
+op-admin-user,198.51.100.77,vm-mgmt-sim-01,14
+op-admin-user,198.51.100.79,vm-mgmt-sim-01,9
+svc-automation,192.0.2.11,vm-mgmt-sim-01,3
 ```
 
 Operator note:
@@ -61,8 +64,8 @@ Result table:
 
 ```text
 Computer,LastHeartbeatUTC,BeatCount
-az-ir-platform-p-westeurope-vm-app-01,2026-04-30 00:39:56,24
-az-ir-platform-p-westeurope-vm-mgmt-01,2026-04-30 00:39:44,25
+vm-app-sim-01,2026-04-30 00:39:56,24
+vm-mgmt-sim-01,2026-04-30 00:39:44,25
 ```
 
 Operator note:
@@ -94,10 +97,10 @@ Result table:
 
 ```text
 TimeGeneratedUTC,Computer,CurrentCPU,BaselineCPU,DeviationRatio
-2026-04-29 14:00:00,az-ir-platform-p-westeurope-vm-app-01,81.7,34.5,2.37
-2026-04-29 14:15:00,az-ir-platform-p-westeurope-vm-app-01,78.4,35.1,2.23
-2026-04-29 14:30:00,az-ir-platform-p-westeurope-vm-app-01,63.2,35.0,1.81
-2026-04-29 14:45:00,az-ir-platform-p-westeurope-vm-app-01,,34.8,
+2026-04-29 14:00:00,vm-app-sim-01,81.7,34.5,2.37
+2026-04-29 14:15:00,vm-app-sim-01,78.4,35.1,2.23
+2026-04-29 14:30:00,vm-app-sim-01,63.2,35.0,1.81
+2026-04-29 14:45:00,vm-app-sim-01,,34.8,
 ```
 
 Operator note:

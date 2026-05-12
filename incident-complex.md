@@ -1,5 +1,8 @@
 # Complex Incident Report: Deployment + NSG Regression + CPU Saturation
 
+Status: Simulated/Sanitized Sample  
+Scope: Portfolio repository. No live tenant data or customer data is included.
+
 ## 1) Incident Summary
 
 - **Incident ID:** `INC-2026-05-18-002`
@@ -168,7 +171,7 @@ Operational consequence:
   "alertRule": "alert-network-path-failure",
   "severity": "Sev2",
   "firedDateTime": "2026-05-18T13:19:41Z",
-  "details": "Denied inbound TCP/443 for source 10.10.40.0/24 by NSG application rule set"
+  "details": "Denied inbound TCP/443 for source 198.51.100.0/24 by NSG application rule set"
 }
 ```
 
@@ -186,16 +189,16 @@ Application logs:
 Nginx/access edge logs:
 
 ```text
-2026-05-18T13:12:17Z 10.10.30.24 - "GET /health" 200 0.031
-2026-05-18T13:12:18Z 10.10.40.19 - "GET /health" 499 30.001
-2026-05-18T13:33:50Z 10.10.40.19 - "GET /health" 200 0.044
+2026-05-18T13:12:17Z 203.0.113.24 - "GET /health" 200 0.031
+2026-05-18T13:12:18Z 198.51.100.19 - "GET /health" 499 30.001
+2026-05-18T13:33:50Z 198.51.100.19 - "GET /health" 200 0.044
 ```
 
 System/network logs:
 
 ```text
 2026-05-18T13:10:55Z kernel: TCP: Possible SYN flooding on port 443. Sending cookies.
-2026-05-18T13:20:01Z netdiag: inbound deny detected for source 10.10.40.0/24 on 443
+2026-05-18T13:20:01Z netdiag: inbound deny detected for source 198.51.100.0/24 on 443
 ```
 
 ## Commands executed
@@ -226,7 +229,7 @@ az monitor metrics list `
 ### Primary causes
 
 1. **NSG rule omission**
-   - trusted ingress CIDR `10.10.40.0/24` removed unintentionally from HTTPS allow rule.
+   - trusted ingress CIDR `198.51.100.0/24` removed unintentionally from HTTPS allow rule.
 
 2. **Deployment-side performance regression**
    - new caching behavior increased misses and compute pressure, causing high CPU and timeouts.

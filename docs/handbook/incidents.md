@@ -13,12 +13,22 @@ Standard response flow:
 
 ## Severity and Escalation
 
-- `Sev1`: customer-facing outage or major degradation
-- `Sev2`: significant degradation with partial impact
+- `Sev1`: full outage or major customer-facing degradation
+- `Sev2`: significant partial impact or major performance degradation
+- `Sev3`: limited impact, noisy warnings, or single-customer issues
+- `Sev4`: informational events (including planned maintenance)
+
 - escalation to incident commander when:
   - customer impact is ongoing, and
   - first-line triage cannot isolate issue quickly, or
   - production control-plane/network changes are implicated
+
+Status labels used in incident evidence:
+
+- **Implemented**: control path exists in Terraform/workflow/runbook code
+- **Partial**: control exists but rollout/activation is optional or incomplete
+- **Simulated/Sanitized**: artifact is redacted or sample-shaped for public sharing
+- **Planned**: documented improvement not yet implemented
 
 ## Primary Incident References
 

@@ -32,48 +32,6 @@ env:
   TF_IN_AUTOMATION: "true"
   TF_INPUT: "false"
   TF_ENV: dev
-  ARM_USE_OIDC: "true"
-  ARM_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
-  ARM_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
-  ARM_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
-  TF_VAR_subscription_id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
-  TF_VAR_tenant_id: ${{ vars.AZURE_TENANT_ID }}
-  TF_VAR_project_name: ${{ vars.TF_PROJECT_NAME }}
-  TF_VAR_environment: dev
-  TF_VAR_location: ${{ vars.TF_LOCATION }}
-  TF_VAR_vnet_cidr: ${{ vars.TF_VNET_CIDR_JSON }}
-  TF_VAR_subnet_cidrs: ${{ vars.TF_SUBNET_CIDRS_JSON }}
-  TF_VAR_admin_source_cidrs: ${{ vars.TF_ADMIN_SOURCE_CIDRS_JSON }}
-  TF_VAR_enable_app_vm_public_ip: ${{ vars.TF_ENABLE_APP_VM_PUBLIC_IP || 'true' }}
-  TF_VAR_vm_size: ${{ vars.TF_LINUX_VM_SIZE }}
-  TF_VAR_admin_username: ${{ vars.TF_LINUX_ADMIN_USERNAME }}
-  TF_VAR_admin_ssh_public_key: ${{ secrets.TF_ADMIN_SSH_PUBLIC_KEY }}
-  TF_VAR_windows_vm_size: ${{ vars.TF_WINDOWS_VM_SIZE }}
-  TF_VAR_enable_management_vm_public_ip: ${{ vars.TF_ENABLE_MANAGEMENT_VM_PUBLIC_IP || 'true' }}
-  TF_VAR_windows_admin_username: ${{ vars.TF_WINDOWS_ADMIN_USERNAME }}
-  TF_VAR_windows_admin_password: ${{ secrets.TF_WINDOWS_ADMIN_PASSWORD }}
-  TF_VAR_log_retention_in_days: ${{ vars.TF_LOG_RETENTION_IN_DAYS }}
-  TF_VAR_cpu_alert_threshold_percent: ${{ vars.TF_CPU_ALERT_THRESHOLD_PERCENT }}
-  TF_VAR_monitor_action_group_email_receivers: ${{ vars.TF_ACTION_GROUP_EMAIL_RECEIVERS_JSON }}
-  TF_VAR_enable_synthetic_availability: ${{ vars.TF_ENABLE_SYNTHETIC_AVAILABILITY == 'true' && vars.TF_SYNTHETIC_CHECK_URL != '' && 'true' || 'false' }}
-  TF_VAR_synthetic_check_url: ${{ vars.TF_SYNTHETIC_CHECK_URL || '' }}
-  TF_VAR_synthetic_frequency_seconds: ${{ vars.TF_SYNTHETIC_FREQUENCY_SECONDS || '300' }}
-  TF_VAR_synthetic_timeout_seconds: ${{ vars.TF_SYNTHETIC_TIMEOUT_SECONDS || '30' }}
-  TF_VAR_synthetic_failed_location_count: ${{ vars.TF_SYNTHETIC_FAILED_LOCATION_COUNT || '2' }}
-  TF_VAR_synthetic_latency_threshold_ms: ${{ vars.TF_SYNTHETIC_LATENCY_THRESHOLD_MS || '2000' }}
-  TF_VAR_synthetic_alert_severity_availability: ${{ vars.TF_SYNTHETIC_ALERT_SEVERITY_AVAILABILITY || '1' }}
-  TF_VAR_synthetic_alert_severity_latency: ${{ vars.TF_SYNTHETIC_ALERT_SEVERITY_LATENCY || '2' }}
-  TF_VAR_enable_container_workload: ${{ vars.TF_ENABLE_CONTAINER_WORKLOAD || 'false' }}
-  TF_VAR_container_subnet_cidr: ${{ vars.TF_CONTAINER_SUBNET_CIDR || '' }}
-  TF_VAR_container_image: ${{ vars.TF_CONTAINER_IMAGE || 'nginx:stable-alpine' }}
-  TF_VAR_container_cpu: ${{ vars.TF_CONTAINER_CPU || '0.5' }}
-  TF_VAR_container_memory_gb: ${{ vars.TF_CONTAINER_MEMORY_GB || '1' }}
-  TF_VAR_backup_time_utc: ${{ vars.TF_BACKUP_TIME_UTC }}
-  TF_VAR_backup_daily_retention_count: ${{ vars.TF_BACKUP_DAILY_RETENTION_COUNT }}
-  TF_VAR_owner: ${{ vars.TF_OWNER }}
-  TF_VAR_cost_center: ${{ vars.TF_COST_CENTER }}
-  TF_VAR_business_unit: ${{ vars.TF_BUSINESS_UNIT }}
-  TF_VAR_extra_tags: ${{ vars.TF_EXTRA_TAGS_JSON }}
 
 jobs:
   terraform-check:
@@ -131,6 +89,49 @@ jobs:
     permissions:
       id-token: write
       contents: read
+    env:
+      ARM_USE_OIDC: "true"
+      ARM_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
+      ARM_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
+      ARM_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      TF_VAR_subscription_id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      TF_VAR_tenant_id: ${{ vars.AZURE_TENANT_ID }}
+      TF_VAR_project_name: ${{ vars.TF_PROJECT_NAME }}
+      TF_VAR_environment: dev
+      TF_VAR_location: ${{ vars.TF_LOCATION }}
+      TF_VAR_vnet_cidr: ${{ vars.TF_VNET_CIDR_JSON }}
+      TF_VAR_subnet_cidrs: ${{ vars.TF_SUBNET_CIDRS_JSON }}
+      TF_VAR_admin_source_cidrs: ${{ vars.TF_ADMIN_SOURCE_CIDRS_JSON }}
+      TF_VAR_enable_app_vm_public_ip: ${{ vars.TF_ENABLE_APP_VM_PUBLIC_IP || 'true' }}
+      TF_VAR_vm_size: ${{ vars.TF_LINUX_VM_SIZE }}
+      TF_VAR_admin_username: ${{ vars.TF_LINUX_ADMIN_USERNAME }}
+      TF_VAR_admin_ssh_public_key: ${{ secrets.TF_ADMIN_SSH_PUBLIC_KEY }}
+      TF_VAR_windows_vm_size: ${{ vars.TF_WINDOWS_VM_SIZE }}
+      TF_VAR_enable_management_vm_public_ip: ${{ vars.TF_ENABLE_MANAGEMENT_VM_PUBLIC_IP || 'true' }}
+      TF_VAR_windows_admin_username: ${{ vars.TF_WINDOWS_ADMIN_USERNAME }}
+      TF_VAR_windows_admin_password: ${{ secrets.TF_WINDOWS_ADMIN_PASSWORD }}
+      TF_VAR_log_retention_in_days: ${{ vars.TF_LOG_RETENTION_IN_DAYS }}
+      TF_VAR_cpu_alert_threshold_percent: ${{ vars.TF_CPU_ALERT_THRESHOLD_PERCENT }}
+      TF_VAR_monitor_action_group_email_receivers: ${{ vars.TF_ACTION_GROUP_EMAIL_RECEIVERS_JSON }}
+      TF_VAR_enable_synthetic_availability: ${{ vars.TF_ENABLE_SYNTHETIC_AVAILABILITY == 'true' && vars.TF_SYNTHETIC_CHECK_URL != '' && 'true' || 'false' }}
+      TF_VAR_synthetic_check_url: ${{ vars.TF_SYNTHETIC_CHECK_URL || '' }}
+      TF_VAR_synthetic_frequency_seconds: ${{ vars.TF_SYNTHETIC_FREQUENCY_SECONDS || '300' }}
+      TF_VAR_synthetic_timeout_seconds: ${{ vars.TF_SYNTHETIC_TIMEOUT_SECONDS || '30' }}
+      TF_VAR_synthetic_failed_location_count: ${{ vars.TF_SYNTHETIC_FAILED_LOCATION_COUNT || '2' }}
+      TF_VAR_synthetic_latency_threshold_ms: ${{ vars.TF_SYNTHETIC_LATENCY_THRESHOLD_MS || '2000' }}
+      TF_VAR_synthetic_alert_severity_availability: ${{ vars.TF_SYNTHETIC_ALERT_SEVERITY_AVAILABILITY || '1' }}
+      TF_VAR_synthetic_alert_severity_latency: ${{ vars.TF_SYNTHETIC_ALERT_SEVERITY_LATENCY || '2' }}
+      TF_VAR_enable_container_workload: ${{ vars.TF_ENABLE_CONTAINER_WORKLOAD || 'false' }}
+      TF_VAR_container_subnet_cidr: ${{ vars.TF_CONTAINER_SUBNET_CIDR || '' }}
+      TF_VAR_container_image: ${{ vars.TF_CONTAINER_IMAGE || 'nginx:stable-alpine' }}
+      TF_VAR_container_cpu: ${{ vars.TF_CONTAINER_CPU || '0.5' }}
+      TF_VAR_container_memory_gb: ${{ vars.TF_CONTAINER_MEMORY_GB || '1' }}
+      TF_VAR_backup_time_utc: ${{ vars.TF_BACKUP_TIME_UTC }}
+      TF_VAR_backup_daily_retention_count: ${{ vars.TF_BACKUP_DAILY_RETENTION_COUNT }}
+      TF_VAR_owner: ${{ vars.TF_OWNER }}
+      TF_VAR_cost_center: ${{ vars.TF_COST_CENTER }}
+      TF_VAR_business_unit: ${{ vars.TF_BUSINESS_UNIT }}
+      TF_VAR_extra_tags: ${{ vars.TF_EXTRA_TAGS_JSON }}
 
     steps:
       - name: Checkout
@@ -199,6 +200,49 @@ jobs:
     permissions:
       id-token: write
       contents: read
+    env:
+      ARM_USE_OIDC: "true"
+      ARM_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
+      ARM_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
+      ARM_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      TF_VAR_subscription_id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      TF_VAR_tenant_id: ${{ vars.AZURE_TENANT_ID }}
+      TF_VAR_project_name: ${{ vars.TF_PROJECT_NAME }}
+      TF_VAR_environment: dev
+      TF_VAR_location: ${{ vars.TF_LOCATION }}
+      TF_VAR_vnet_cidr: ${{ vars.TF_VNET_CIDR_JSON }}
+      TF_VAR_subnet_cidrs: ${{ vars.TF_SUBNET_CIDRS_JSON }}
+      TF_VAR_admin_source_cidrs: ${{ vars.TF_ADMIN_SOURCE_CIDRS_JSON }}
+      TF_VAR_enable_app_vm_public_ip: ${{ vars.TF_ENABLE_APP_VM_PUBLIC_IP || 'true' }}
+      TF_VAR_vm_size: ${{ vars.TF_LINUX_VM_SIZE }}
+      TF_VAR_admin_username: ${{ vars.TF_LINUX_ADMIN_USERNAME }}
+      TF_VAR_admin_ssh_public_key: ${{ secrets.TF_ADMIN_SSH_PUBLIC_KEY }}
+      TF_VAR_windows_vm_size: ${{ vars.TF_WINDOWS_VM_SIZE }}
+      TF_VAR_enable_management_vm_public_ip: ${{ vars.TF_ENABLE_MANAGEMENT_VM_PUBLIC_IP || 'true' }}
+      TF_VAR_windows_admin_username: ${{ vars.TF_WINDOWS_ADMIN_USERNAME }}
+      TF_VAR_windows_admin_password: ${{ secrets.TF_WINDOWS_ADMIN_PASSWORD }}
+      TF_VAR_log_retention_in_days: ${{ vars.TF_LOG_RETENTION_IN_DAYS }}
+      TF_VAR_cpu_alert_threshold_percent: ${{ vars.TF_CPU_ALERT_THRESHOLD_PERCENT }}
+      TF_VAR_monitor_action_group_email_receivers: ${{ vars.TF_ACTION_GROUP_EMAIL_RECEIVERS_JSON }}
+      TF_VAR_enable_synthetic_availability: ${{ vars.TF_ENABLE_SYNTHETIC_AVAILABILITY == 'true' && vars.TF_SYNTHETIC_CHECK_URL != '' && 'true' || 'false' }}
+      TF_VAR_synthetic_check_url: ${{ vars.TF_SYNTHETIC_CHECK_URL || '' }}
+      TF_VAR_synthetic_frequency_seconds: ${{ vars.TF_SYNTHETIC_FREQUENCY_SECONDS || '300' }}
+      TF_VAR_synthetic_timeout_seconds: ${{ vars.TF_SYNTHETIC_TIMEOUT_SECONDS || '30' }}
+      TF_VAR_synthetic_failed_location_count: ${{ vars.TF_SYNTHETIC_FAILED_LOCATION_COUNT || '2' }}
+      TF_VAR_synthetic_latency_threshold_ms: ${{ vars.TF_SYNTHETIC_LATENCY_THRESHOLD_MS || '2000' }}
+      TF_VAR_synthetic_alert_severity_availability: ${{ vars.TF_SYNTHETIC_ALERT_SEVERITY_AVAILABILITY || '1' }}
+      TF_VAR_synthetic_alert_severity_latency: ${{ vars.TF_SYNTHETIC_ALERT_SEVERITY_LATENCY || '2' }}
+      TF_VAR_enable_container_workload: ${{ vars.TF_ENABLE_CONTAINER_WORKLOAD || 'false' }}
+      TF_VAR_container_subnet_cidr: ${{ vars.TF_CONTAINER_SUBNET_CIDR || '' }}
+      TF_VAR_container_image: ${{ vars.TF_CONTAINER_IMAGE || 'nginx:stable-alpine' }}
+      TF_VAR_container_cpu: ${{ vars.TF_CONTAINER_CPU || '0.5' }}
+      TF_VAR_container_memory_gb: ${{ vars.TF_CONTAINER_MEMORY_GB || '1' }}
+      TF_VAR_backup_time_utc: ${{ vars.TF_BACKUP_TIME_UTC }}
+      TF_VAR_backup_daily_retention_count: ${{ vars.TF_BACKUP_DAILY_RETENTION_COUNT }}
+      TF_VAR_owner: ${{ vars.TF_OWNER }}
+      TF_VAR_cost_center: ${{ vars.TF_COST_CENTER }}
+      TF_VAR_business_unit: ${{ vars.TF_BUSINESS_UNIT }}
+      TF_VAR_extra_tags: ${{ vars.TF_EXTRA_TAGS_JSON }}
 
     steps:
       - name: Checkout

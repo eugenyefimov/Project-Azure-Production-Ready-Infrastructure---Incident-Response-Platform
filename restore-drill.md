@@ -1,5 +1,8 @@
 # Restore Drill Report: VM Failure -> Backup Restore
 
+Status: Simulated/Sanitized Sample  
+Scope: Portfolio repository. No live tenant data or customer data is included.
+
 - **Drill ID:** `DRILL-2026-05-27-VMR-01`
 - **Environment:** `staging` (isolated recovery subnet)
 - **Target workload:** `az-ir-platform-s-westeurope-vm-app-01` (`customer-api`)
@@ -202,7 +205,7 @@ Output excerpt:
 Verification command/output excerpts:
 
 ```powershell
-ssh platform-oncall@10.40.2.19 "sudo systemctl is-active customer-api && curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/health"
+ssh ops-user@192.0.2.19 "sudo systemctl is-active customer-api && curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/health"
 ```
 
 ```text

@@ -7,7 +7,7 @@
   - `.github/workflows/terraform-staging.yml`
   - `.github/workflows/terraform-prod.yml`
 - Standard flow:
-  - `fmt` -> `validate` -> optional security scan -> `plan` -> plan approval -> `apply`
+  - `fmt` -> `validate` -> mandatory security scans (`tflint`, `tfsec`, `checkov`) -> `plan` -> plan approval -> `apply`
 - Production protections:
   - no automatic apply on push
   - manual dispatch + explicit production confirmation
@@ -29,7 +29,7 @@ Primary evidence sources:
 
 - Azure Monitor alert history
 - Log Analytics query results
-- workbook trend views
+- workbook trend views (**Planned/Documented**, not currently provisioned via Terraform)
 - incident channel timestamps
 
 Evidence artifacts:
@@ -38,6 +38,12 @@ Evidence artifacts:
 - `evidence/azure-monitor-alert-payload.json`
 - `evidence/log-analytics-query-results.md`
 - `telemetry-trends.md`
+
+Status note:
+- **Implemented**: Terraform/workflow/runbook controls in repository code
+- **Partial**: controls that are conditional/optional by environment inputs
+- **Simulated/Sanitized**: artifacts prepared for public sharing with redaction
+- **Planned**: documented capability not yet implemented in code
 
 Traceability requirement:
 

@@ -1,3 +1,6 @@
+Status: Simulated/Sanitized Sample
+Scope: Portfolio repository. No live tenant data or customer data is included.
+
 Run context:
   workflow: Terraform Prod
   run_id: 10428977431
@@ -19,9 +22,9 @@ Outputs:
 
 alert_high_cpu_id = "/subscriptions/***/resourceGroups/az-ir-platform-p-westeurope-rg-network/providers/microsoft.insights/metricAlerts/alert-vm-high-cpu"
 alert_vm_down_id = "/subscriptions/***/resourceGroups/az-ir-platform-p-westeurope-rg-network/providers/microsoft.insights/metricAlerts/alert-vm-availability"
-application_vm_private_ip = "10.60.2.4"
+application_vm_private_ip = "192.0.2.4"
 container_group_name = "az-ir-platform-p-westeurope-aci-app"
-container_private_ip = "10.60.4.5"
+container_private_ip = "192.0.2.5"
 log_analytics_workspace_name = "az-ir-platform-p-westeurope-law"
 network_resource_group_name = "az-ir-platform-p-westeurope-rg-network"
 

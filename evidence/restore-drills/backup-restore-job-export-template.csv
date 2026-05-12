@@ -1,0 +1,3 @@
+Status: Simulated/Sanitized Sample
+job_id,environment,workload,vault_name,restore_point_time_utc,job_start_utc,job_end_utc,status,measured_rto,restore_target,notes
+JOB-2026-05-27-001,staging,customer-api,az-ir-platform-s-rsv,2026-05-27T00:58:00Z,2026-05-27T09:00:12Z,2026-05-27T09:54:42Z,Completed,57m 59s,rg-restore-drill,first validation passed after telemetry delay

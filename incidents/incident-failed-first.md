@@ -1,5 +1,8 @@
 # Incident Report: Failed-First Remediation (DNS vs NSG Egress)
 
+Status: Simulated/Sanitized Sample  
+Scope: Portfolio repository. No live tenant data or customer data is included.
+
 - **Incident ID:** `INC-2026-06-03-004`
 - **Environment:** `prod`
 - **Service:** `customer-api`
@@ -79,9 +82,9 @@ az network dns resolver forwarding-rule update `
   --resource-group az-ir-platform-p-westeurope-rg-network `
   --dns-forwarding-ruleset-name rs-prod-upstream `
   --name fr-upstream-api `
-  --target-dns-servers 10.50.1.10 10.50.1.11
+  --target-dns-servers 192.0.2.10 192.0.2.11
 
-ssh platform-oncall@az-ir-platform-p-westeurope-vm-app-01
+ssh ops-user@vm-app-sim-01
 sudo resolvectl flush-caches
 sudo systemctl restart customer-api
 ```
@@ -98,9 +101,9 @@ sudo systemctl restart customer-api
 App log snippet:
 
 ```text
-2026-06-03T16:27:04Z api[8013]: upstream lookup ok api-dependency.internal -> 10.60.2.14
+2026-06-03T16:27:04Z api[8013]: upstream lookup ok api-dependency.simulated -> 192.0.2.14
 2026-06-03T16:27:05Z api[8013]: upstream connect timeout after 3000ms
-2026-06-03T16:29:42Z api[8013]: upstream lookup ok api-dependency.internal -> 10.60.2.14
+2026-06-03T16:29:42Z api[8013]: upstream lookup ok api-dependency.simulated -> 192.0.2.14
 2026-06-03T16:29:45Z api[8013]: upstream connect timeout after 3000ms
 ```
 
@@ -120,9 +123,9 @@ Pivot evidence:
 
 ```text
 TimeGeneratedUTC,SrcIP,DestIP,DestPort,Decision,RuleName,Hits
-2026-06-03T16:31:00Z,10.40.2.9,10.60.2.14,443,Deny,deny-egress-default,184
-2026-06-03T16:32:00Z,10.40.2.9,10.60.2.14,443,Deny,deny-egress-default,201
-2026-06-03T16:33:00Z,10.40.2.9,10.60.2.14,443,Deny,deny-egress-default,193
+2026-06-03T16:31:00Z,192.0.2.9,192.0.2.14,443,Deny,deny-egress-default,184
+2026-06-03T16:32:00Z,192.0.2.9,192.0.2.14,443,Deny,deny-egress-default,201
+2026-06-03T16:33:00Z,192.0.2.9,192.0.2.14,443,Deny,deny-egress-default,193
 ```
 
 Decision at `16:36`:
@@ -137,7 +140,7 @@ Decision at `16:36`:
 
 Second remediation:
 
-- added explicit allow egress rule from app subnet to dependency CIDR `10.60.2.14/32` on `443`
+- added explicit allow egress rule from app subnet to dependency CIDR `192.0.2.14/32` on `443`
 - kept default deny behavior for other destinations
 
 Change path:
@@ -157,8 +160,8 @@ az network nsg rule create `
   --direction Outbound `
   --access Allow `
   --protocol Tcp `
-  --source-address-prefixes 10.40.2.0/24 `
-  --destination-address-prefixes 10.60.2.14/32 `
+  --source-address-prefixes 192.0.2.0/24 `
+  --destination-address-prefixes 192.0.2.14/32 `
   --destination-port-ranges 443
 
 az network nic list-effective-nsg `
@@ -191,8 +194,8 @@ Latency trend:
 Flow log verification:
 
 ```text
-2026-06-03T16:50:00Z,10.40.2.9,10.60.2.14,443,Allow,allow-egress-dependency-443,267
-2026-06-03T16:51:00Z,10.40.2.9,10.60.2.14,443,Allow,allow-egress-dependency-443,251
+2026-06-03T16:50:00Z,192.0.2.9,192.0.2.14,443,Allow,allow-egress-dependency-443,267
+2026-06-03T16:51:00Z,192.0.2.9,192.0.2.14,443,Allow,allow-egress-dependency-443,251
 ```
 
 Incident closure criteria met:

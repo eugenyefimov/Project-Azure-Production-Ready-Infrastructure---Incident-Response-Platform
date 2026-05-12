@@ -1,0 +1,4 @@
+Status: Simulated/Sanitized Sample
+capture_date_utc,environment,alert_id,alert_rule_name,severity,resource_name,state,fired_time_utc,ack_time_utc,closed_time_utc,incident_id,notes
+2026-05-08,prod,ALRT-CPU-001,alert-vm-high-cpu,Sev2,prod-vm-app-01,Fired,2026-05-08T10:18:45Z,2026-05-08T10:19:10Z,2026-05-08T10:57:30Z,INC-2026-05-08-CPU-01,sustained CPU saturation
+2026-05-08,prod,ALRT-AVAIL-002,alert-vm-availability,Sev1,prod-vm-app-01,Resolved,2026-05-08T10:20:00Z,2026-05-08T10:20:20Z,2026-05-08T10:30:00Z,INC-2026-05-08-CPU-01,transient dependency impact

@@ -48,6 +48,7 @@ dist/
 tmp/
 temp/
 coverage/
+*.log
 
 # IDE/editor metadata
 .vscode/

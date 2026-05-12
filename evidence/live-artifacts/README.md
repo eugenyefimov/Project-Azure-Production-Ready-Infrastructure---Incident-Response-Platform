@@ -1,110 +1,55 @@
-# Live Artifact Pack (Simulated Tenant Exports)
+# Live Artifacts Evidence Pack
 
-This folder contains realistic, sanitized artifacts formatted to look like exports from an active Azure tenant over multiple weeks.
+This folder is used for credibility-focused operations evidence.
 
-The dataset intentionally includes:
+Status labels used here:
+- **Real Sanitized Export**: exported from a real environment and sanitized for public sharing
+- **Simulated/Sanitized Sample**: structured sample to demonstrate process until real export is added
+- **Planned**: target artifact not yet included
 
-- non-identical event patterns over time
-- false alerts and noisy windows
-- delayed acknowledgments
-- retry behavior and partial failures
+## What is currently simulated vs real
 
-## Artifact Index
+- `azure-monitor-alert-history.csv` -> **Simulated/Sanitized Sample**
+- `activity-log-entries.csv` -> **Simulated/Sanitized Sample**
+- `terraform-apply-history.csv` -> **Simulated/Sanitized Sample**
+- `log-analytics-query-exports.md` -> **Simulated/Sanitized Sample**
+- `policy-compliance-evidence.md` -> **Simulated/Sanitized Sample**
 
-## 1) Azure Monitor Alert History
+When you replace a sample with a real export, add a header line in the file:
+`Status: Real Sanitized Export (captured YYYY-MM-DD, environment <env>)`
 
-- File: `azure-monitor-alert-history.csv`
-- Proves:
-  - alerting is active over time (not one isolated event)
-  - severity distribution and acknowledgment latency are measurable
-  - noise and duplicates are visible and managed
-- How generated (real-world equivalent):
-  - Azure Monitor Alerts export or API pull
-  - enriched with incident IDs and acknowledgment source
-- Interview usage:
-  - show trend quality, not just one “good” alert
-  - explain false positive handling and rule tuning
-  - point out duplicate firings and delayed acknowledgments to show realistic on-call pressure
+## Why sanitization is required
 
-## 2) Log Analytics Query Exports
+- protect tenant IDs, subscription IDs, object IDs, hostnames, email addresses, and IP ranges
+- avoid exposing internal naming patterns and privileged account details
+- keep artifacts shareable for hiring/review without leaking sensitive operational data
 
-- File: `log-analytics-query-exports.md`
-- Proves:
-  - operators use KQL outputs during incidents
-  - telemetry interpretation is grounded in timestamped evidence
-- How generated (real-world equivalent):
-  - run saved KQL queries in Log Analytics
-  - export result tables for incident windows
-- Interview usage:
-  - walk from alert -> query -> fault-domain decision
+## Acceptable sanitization patterns
 
-## 3) Policy Compliance Evidence
+- replace subscription IDs with `00000000-0000-0000-0000-000000000000`
+- replace object IDs with `<redacted-object-id>`
+- replace public IPs with RFC5737 examples (`203.0.113.10`, `198.51.100.5`)
+- mask tenant-specific hostnames as `<env>-vm-app-01`
+- keep timestamps, severity, correlation IDs, and sequence order where possible
 
-- File: `policy-compliance-evidence.md`
-- Proves:
-  - policy enforcement is active and compliance posture changes over time
-  - remediation and exemptions are traceable
-- How generated (real-world equivalent):
-  - Azure Policy compliance view export + assignment details
-- Interview usage:
-  - show denied resources, remediation cadence, and residual risk
+Do not modify:
+- event ordering
+- incident IDs and cross-reference keys
+- pass/fail outcomes
 
-## 4) Activity Log Timeline
+## Minimum credible artifact set
 
-- File: `activity-log-entries.csv`
-- Proves:
-  - infrastructure and policy changes are auditable with timestamps
-  - incident windows can be correlated to control-plane changes
-- How generated (real-world equivalent):
-  - Azure Activity Log export filtered by resource group and operation category
-- Interview usage:
-  - correlate suspected change to incident onset and rollback
-  - show one failed control-plane write followed by successful retry
+Add at least one **Real Sanitized Export** for each:
+1. alert history slice (`alerts fired/ack/closed`)
+2. KQL query result slice for an incident window
+3. backup or restore job output
+4. policy compliance export
+5. CI/CD plan/apply proof excerpt
 
-## 5) Terraform Apply History
+## Authenticity without raw secrets
 
-- File: `terraform-apply-history.csv`
-- Proves:
-  - multiple applies over time, not one-off deployment
-  - operational outcomes include retries and partial failures
-- How generated (real-world equivalent):
-  - CI/CD workflow run exports + apply job logs
-- Interview usage:
-  - show change reliability trend and change-failure patterns
-  - explain why failed apply attempts are expected and how guardrails prevented unsafe drift
-
-## Time Span and Realism Profile
-
-- timeline coverage: `2026-02` to `2026-05`
-- includes:
-  - false positives (agent heartbeat gap, external probe instability, red-team noise)
-  - noisy duplicates during single incidents
-  - partial failures (region/source-specific impact)
-  - apply retries after transient provider/state issues
-  - non-monotonic compliance trend (improvement with occasional regressions)
-
-## Traceability by Incident
-
-- `INC-2026-04-30-001`:
-  - alerts: `azure-monitor-alert-history.csv` (ALRT-90230)
-  - activity changes: `activity-log-entries.csv` (`CHG-4820`, rollback entry)
-  - apply history: `terraform-apply-history.csv` (`run_id 10470290125`, `10470294488`)
-  - query evidence: `log-analytics-query-exports.md` (heartbeat continuity section)
-- `INC-2026-05-18-002`:
-  - alerts: `azure-monitor-alert-history.csv` (ALRT-90311..ALRT-90313)
-  - activity changes: `activity-log-entries.csv` (`CHG-4891`, incident hotfix entries)
-  - apply history: `terraform-apply-history.csv` (`run_id 10486732044`, `10486736788`)
-  - query evidence: `log-analytics-query-exports.md` (partial regional failure correlation)
-
-## Suggested Presentation Sequence
-
-1. `terraform-apply-history.csv` (change baseline)
-2. `activity-log-entries.csv` (what changed in Azure)
-3. `azure-monitor-alert-history.csv` (what fired and when)
-4. `log-analytics-query-exports.md` (how fault was validated)
-5. `policy-compliance-evidence.md` (how guardrails behaved)
-
-## Important Note
-
-These artifacts are simulated but intentionally shaped to mirror realistic tenant behavior and data quality issues.  
-When live tenant exports are available, replace file contents with real captures while keeping the same structure.
+Authenticity is preserved by:
+- stable IDs linking alert -> query -> change -> mitigation
+- consistent timestamps across artifacts
+- direct mapping to implemented Terraform/workflow controls
+- explicit labels whenever content is simulated

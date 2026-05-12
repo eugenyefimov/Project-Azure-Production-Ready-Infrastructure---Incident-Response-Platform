@@ -1,5 +1,8 @@
 # Log Analytics Query Results (Sanitized Samples)
 
+Status: Simulated/Sanitized Sample  
+Scope: Portfolio repository. No live tenant data or customer data is included.
+
 These are representative outputs and KQL snippets used during investigations. They are intentionally small and focused on what an on-call engineer would actually run.
 
 ## Query A: Failed Logins by Account and Source (Last 60 Minutes)
@@ -22,10 +25,10 @@ SecurityEvent
 
 | Time Window (UTC)     | Account            | Source IP     | Host                                   | FailedAttempts |
 |-----------------------|--------------------|---------------|----------------------------------------|----------------|
-| 2026-04-30 08:00-09:00| svc-backup-agent   | 10.20.14.11   | az-ir-platform-p-westeurope-vm-mgmt-01 | 3              |
-| 2026-04-30 08:00-09:00| admin.platform     | 185.142.41.77 | az-ir-platform-p-westeurope-vm-mgmt-01 | 14             |
-| 2026-04-30 08:00-09:00| admin.platform     | 185.142.41.79 | az-ir-platform-p-westeurope-vm-mgmt-01 | 9              |
-| 2026-04-30 08:00-09:00| helpdesk.ops       | 10.10.30.24   | az-ir-platform-p-westeurope-vm-mgmt-01 | 2              |
+| 2026-04-30 08:00-09:00| svc-automation     | 192.0.2.11    | vm-mgmt-sim-01                          | 3              |
+| 2026-04-30 08:00-09:00| op-admin-user      | 198.51.100.77 | vm-mgmt-sim-01                          | 14             |
+| 2026-04-30 08:00-09:00| op-admin-user      | 198.51.100.79 | vm-mgmt-sim-01                          | 9              |
+| 2026-04-30 08:00-09:00| helpdesk-user      | 203.0.113.24  | vm-mgmt-sim-01                          | 2              |
 
 Operator note:
 - `svc-backup-agent` failures were expected after password rotation drift; corrected by secret sync.
@@ -53,9 +56,9 @@ Heartbeat
 
 | Host                                   | LastHeartbeatUTC      | MinutesSinceHeartbeat | HealthState |
 |----------------------------------------|------------------------|-----------------------|-------------|
-| az-ir-platform-p-westeurope-vm-app-01  | 2026-04-30 00:46:58    | 1                     | Healthy     |
-| az-ir-platform-p-westeurope-vm-mgmt-01 | 2026-04-30 00:46:31    | 1                     | Healthy     |
-| az-ir-platform-s-westeurope-vm-app-01  | 2026-04-30 00:40:11    | 7                     | Warning     |
+| vm-app-sim-01                           | 2026-04-30 00:46:58    | 1                     | Healthy     |
+| vm-mgmt-sim-01                          | 2026-04-30 00:46:31    | 1                     | Healthy     |
+| vm-app-sim-02                           | 2026-04-30 00:40:11    | 7                     | Warning     |
 
 Operator note:
 - Staging app VM heartbeat delay correlated with patch cycle; no user impact.
@@ -82,9 +85,9 @@ Perf
 
 | TimeGeneratedUTC      | Host                                   | CurrentCPU | BaselineCPU | DeviationRatio |
 |-----------------------|----------------------------------------|------------|-------------|----------------|
-| 2026-04-29 14:10:00   | az-ir-platform-p-westeurope-vm-app-01  | 83.4       | 33.7        | 2.47           |
-| 2026-04-29 14:25:00   | az-ir-platform-p-westeurope-vm-app-01  | 79.1       | 34.8        | 2.27           |
-| 2026-04-29 14:40:00   | az-ir-platform-p-westeurope-vm-app-01  | 68.2       | 35.1        | 1.94           |
+| 2026-04-29 14:10:00   | vm-app-sim-01                           | 83.4       | 33.7        | 2.47           |
+| 2026-04-29 14:25:00   | vm-app-sim-01                           | 79.1       | 34.8        | 2.27           |
+| 2026-04-29 14:40:00   | vm-app-sim-01                           | 68.2       | 35.1        | 1.94           |
 
 Operator note:
 - Final row dropped below alert threshold but remained elevated; investigation kept open for 30 more minutes.

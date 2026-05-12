@@ -6,6 +6,11 @@ If a claim is not implemented in Terraform/GitHub Actions/monitoring configurati
 
 ## How to read this
 
+- Status labels used across README/docs/evidence:
+  - **Implemented**: provisioned/enforced in code and verifiable in repository files
+  - **Partial**: implemented but conditional/optional or not active in all environments
+  - **Simulated/Sanitized**: evidence artifact is realistic but redacted/sample-shaped
+  - **Planned**: documented roadmap item not implemented yet
 - **Terraform Resource / Module**: where the infrastructure or control should be implemented.
 - **CI/CD Workflow**: where pipeline safety and rollout behavior should be implemented.
 - **Monitoring / Alerting**: what Azure Monitor resources should exist to support the claim.
@@ -13,6 +18,13 @@ If a claim is not implemented in Terraform/GitHub Actions/monitoring configurati
 - **Evidence Artifact**: an artifact that should demonstrate the claim in practice.
 - **Current Gaps**: exactly what is missing to consider the claim operationally supported.
 - **Improvement Recommendation**: concrete next steps to close the gap.
+
+## Quick Status Index (Reviewer-Facing)
+
+- **Implemented**: environment separation, core Terraform modules, OIDC plan/apply workflow controls, VM monitoring baseline, governance/RBAC baseline.
+- **Partial**: synthetic endpoint monitoring rollout, restore evidence maturity, severity model completeness in older incident artifacts.
+- **Simulated/Sanitized**: parts of `evidence/live-artifacts/`, realistic incident walkthrough placeholders, restore drill screenshot placeholders.
+- **Planned**: KPI automation, workbook-as-code provisioning, advanced anomaly/security detection.
 
 ## Traceability Matrix
 

@@ -1,5 +1,8 @@
 # Execution Evidence
 
+Status: Simulated/Sanitized Sample  
+Scope: Portfolio repository. No live tenant data or customer data is included.
+
 This folder contains sanitized operational artifacts that document how the platform is executed and operated.
 
 The goal is to preserve evidence quality suitable for incident review and audit discussions:
@@ -10,6 +13,12 @@ The goal is to preserve evidence quality suitable for incident review and audit 
 - data is representative, not "perfect demo output"
 
 ## Artifacts
+
+Status labels used in this folder:
+- **Implemented**: control path exists in Terraform/workflow/runbook code
+- **Partial**: artifact/process exists but not complete for all scenarios
+- **Simulated/Sanitized**: sample or redacted evidence for public sharing
+- **Planned**: documented artifact not yet added
 
 ## 1) Terraform Plan Output
 
@@ -83,6 +92,14 @@ The goal is to preserve evidence quality suitable for incident review and audit 
 - Operations usage:
   - interview walkthrough: alert -> triage -> mitigation -> validation -> follow-up
   - reviewer validation of claim-to-code consistency
+
+## 8) Alert and Policy Evidence Guidance
+
+- Alerts: `evidence/alerts/`
+- Policy compliance: `evidence/policy/`
+- Restore drill guidance: `evidence/restore-drills/`
+
+These folders define exactly what real sanitized exports to add next.
 
 ## Evidence Review Guidance
 

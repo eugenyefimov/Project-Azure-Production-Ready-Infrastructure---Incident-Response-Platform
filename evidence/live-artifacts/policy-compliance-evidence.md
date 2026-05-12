@@ -1,5 +1,8 @@
 # Policy Compliance Evidence (Simulated Screenshot Notes + Sample Output)
 
+Status: Simulated/Sanitized Sample  
+Scope: Portfolio repository. No live tenant data or customer data is included.
+
 This document describes what policy compliance screenshots should contain and includes realistic sample output values over time.
 
 What this artifact proves:
@@ -138,7 +141,7 @@ ExemptionName: exm-breakglass-aci-diagnostics
 Scope: /subscriptions/***/resourceGroups/az-ir-platform-p-westeurope-rg-network
 PolicyAssignment: pa-require-tags
 Category: Waiver
-Owner: platform-oncall@company.example
+Owner: secops-contact@example.com
 CreatedOn: 2026-05-06T09:12:20Z
 ExpiresOn: 2026-05-13T09:12:20Z
 Reason: emergency diagnostics container launched without full metadata tags during incident bridge

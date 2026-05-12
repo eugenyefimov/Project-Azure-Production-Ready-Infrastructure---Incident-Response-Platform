@@ -1,0 +1,7 @@
+# Infrastructure and delivery controls
+modules/** @repo-owner
+environments/** @repo-owner
+.github/workflows/** @repo-owner
+
+# Evidence and operational documentation
+evidence/** @repo-owner
